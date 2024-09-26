@@ -13,13 +13,13 @@ class User(AbstractUser):
     # Добавляем related_name для полей groups и user_permissions
     groups = models.ManyToManyField(
         Group,
-        related_name="custom_user_set",  # Уникальное имя для обратной связи
+        related_name="custom_user_set",
         blank=True
     )
 
     user_permissions = models.ManyToManyField(
         Permission,
-        related_name="custom_user_permissions_set",  # Уникальное имя для обратной связи
+        related_name="custom_user_permissions_set",
         blank=True
     )
 
