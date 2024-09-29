@@ -1,5 +1,6 @@
-from django.db import models
 from django.core.validators import MinValueValidator, MaxValueValidator
+from django.db import models
+
 
 class Course(models.Model):
     name = models.CharField(max_length=90, null=False)
@@ -21,6 +22,7 @@ class Task(models.Model):
     description = models.CharField(max_length=350, null=False)
     for_course = models.ForeignKey(Course, on_delete=models.CASCADE, null=False)
     created_by_teacher = models.ForeignKey('auth_app.User', on_delete=models.CASCADE, null=False)
+    assigned_groups = models.ManyToManyField('Group', related_name='tasks', blank=True)
 
     class Meta:
         db_table = 'Tasks'
@@ -65,15 +67,17 @@ class CourseFeedback(models.Model):
 
 
 class TeacherFeedback(models.Model):
-    student = models.ForeignKey('auth_app.User', on_delete=models.CASCADE, null=False)
-    teacher = models.ForeignKey('auth_app.User', on_delete=models.CASCADE, null=False)
+    student = models.ForeignKey('auth_app.User', on_delete=models.CASCADE, null=False,
+                                related_name='student_feedbacks')
+    teacher = models.ForeignKey('auth_app.User', on_delete=models.CASCADE, null=False,
+                                related_name='teacher_feedbacks')
     review = models.CharField(max_length=150)
     rating = models.IntegerField(null=False, validators=[
         MinValueValidator(1),
         MaxValueValidator(5)
     ])
     created_at = models.DateTimeField()
-    
+
     class Meta:
         db_table = 'teacher_feedbacks'
         verbose_name = 'TeacherFeedback'
@@ -86,7 +90,7 @@ class TeacherFeedback(models.Model):
 class TaskSolution(models.Model):
     student = models.ForeignKey('auth_app.User', on_delete=models.CASCADE, null=False)
     task = models.ForeignKey(Task, on_delete=models.CASCADE, null=False)
-    solution_file = models.FileField(null=False)
+    solution_file_url = models.TextField(null=False)
     description = models.CharField(max_length=180)
 
     class Meta:
@@ -96,7 +100,7 @@ class TaskSolution(models.Model):
 
     def __str__(self):
         return f'{self.student = }. {self.task = }'
-    
+
 
 class SolutionReview(models.Model):
     task = models.ForeignKey(TaskSolution, on_delete=models.CASCADE, null=False)
@@ -114,3 +118,38 @@ class SolutionReview(models.Model):
 
     def __str__(self):
         return f'{self.task = }. {self.teacher = }'
+
+
+class StudentProgress(models.Model):
+    student = models.ForeignKey('auth_app.User', on_delete=models.CASCADE)
+    course = models.ForeignKey(Course, on_delete=models.CASCADE)
+    completed_tasks = models.IntegerField(default=0)
+    total_tasks = models.IntegerField(default=0)
+    progress_percentage = models.FloatField()
+
+    class Meta:
+        db_table = 'student_progress'
+        verbose_name = 'Student Progress'
+        verbose_name_plural = 'Student Progress'
+
+
+class CourseFile(models.Model):
+    course = models.ForeignKey(Course, on_delete=models.CASCADE)
+    file_url = models.TextField()
+    description = models.CharField(max_length=150)
+
+    class Meta:
+        db_table = 'course_files'
+        verbose_name = 'Course File'
+        verbose_name_plural = 'Course Files'
+
+class TaskComment(models.Model):
+    task = models.ForeignKey(Task, on_delete=models.CASCADE)
+    author = models.ForeignKey('auth_app.User', on_delete=models.CASCADE)
+    comment_text = models.CharField(max_length=350)
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        db_table = 'task_comments'
+        verbose_name = 'Task Comment'
+        verbose_name_plural = 'Task Comments'
