@@ -10,6 +10,9 @@ class User(AbstractUser):
     role = models.CharField(max_length=7, choices=ROLE_CHOICES, default="student")
     group_number = models.CharField(max_length=25)
 
+    # Переопределение строки
+    email = models.EmailField(blank=True, unique=True)
+
     # Добавляем related_name для полей groups и user_permissions
     groups = models.ManyToManyField(
         Group,
