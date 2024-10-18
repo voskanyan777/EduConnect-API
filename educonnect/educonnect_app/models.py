@@ -36,7 +36,7 @@ class Task(models.Model):
 class Group(models.Model):
     student = models.ForeignKey('auth_app.User', on_delete=models.CASCADE, null=False)
     group_number = models.CharField(max_length=25, null=False)
-    students_count = models.IntegerField()
+    students_count = models.PositiveIntegerField(null=False)
 
     class Meta:
         db_table = 'Groups'
@@ -55,7 +55,7 @@ class CourseFeedback(models.Model):
         MinValueValidator(1),
         MaxValueValidator(5)
     ])
-    created_at = models.DateTimeField()
+    created_at = models.DateTimeField(auto_now_add=True)
 
     class Meta:
         db_table = 'course_feedbacks'
@@ -76,7 +76,7 @@ class TeacherFeedback(models.Model):
         MinValueValidator(1),
         MaxValueValidator(5)
     ])
-    created_at = models.DateTimeField()
+    created_at = models.DateTimeField(auto_now_add=True)
 
     class Meta:
         db_table = 'teacher_feedbacks'
