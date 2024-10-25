@@ -22,8 +22,7 @@ class Task(models.Model):
     description = models.CharField(max_length=350, null=False)
     for_course = models.ForeignKey(Course, on_delete=models.CASCADE, null=False)
     created_by_teacher = models.ForeignKey('auth_app.User', on_delete=models.CASCADE, null=False)
-    assigned_groups = models.ManyToManyField('Group', related_name='tasks', blank=True)
-    deadline = models.DateField(null=False)
+    deadline = models.DateField()
     class Meta:
         db_table = 'Tasks'
         verbose_name = 'Task'

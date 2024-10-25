@@ -1,9 +1,9 @@
 from django.shortcuts import render
 from rest_framework.generics import CreateAPIView
-from rest_framework import status
+from rest_framework import status, generics
 from rest_framework.response import Response
 from .models import Course
-from .serializers import CreateCourseSerializer
+from .serializers import CreateCourseSerializer, CreateTaskSerializer
 from .permissions import IsTeacherUser
 
 class CreateCourseView(CreateAPIView):
@@ -22,5 +22,18 @@ class CreateCourseView(CreateAPIView):
             }, status=status.HTTP_201_CREATED
             )
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+    permission_classes = (IsTeacherUser, )
+
+
+class CreateTaskView(generics.CreateAPIView):
+    serializer_class = CreateTaskSerializer
+
+    def post(self, request, *args, **kwargs):
+        serializer = self.get_serializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+        self.perform_create(serializer)
+
+        return Response(serializer.data, status=status.HTTP_201_CREATED)
 
     permission_classes = (IsTeacherUser, )
