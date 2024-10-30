@@ -4,7 +4,7 @@ from rest_framework import status, generics
 from rest_framework.response import Response
 from .models import Course
 from .serializers import CreateCourseSerializer, CreateTaskSerializer
-from .permissions import IsTeacherUser
+from .permissions import IsTeacher
 
 class CreateCourseView(CreateAPIView):
     def post(self, request):
@@ -23,7 +23,7 @@ class CreateCourseView(CreateAPIView):
             )
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
-    permission_classes = (IsTeacherUser, )
+    permission_classes = (IsTeacher, )
 
 
 class CreateTaskView(generics.CreateAPIView):
@@ -36,4 +36,4 @@ class CreateTaskView(generics.CreateAPIView):
 
         return Response(serializer.data, status=status.HTTP_201_CREATED)
 
-    permission_classes = (IsTeacherUser, )
+    permission_classes = (IsTeacher, )

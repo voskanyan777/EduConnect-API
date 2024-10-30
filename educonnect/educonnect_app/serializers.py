@@ -2,10 +2,12 @@ from rest_framework import serializers
 
 from educonnect_app.models import Task
 
+
 class CreateCourseSerializer(serializers.Serializer):
     name = serializers.CharField(max_length=90, allow_null=False)
     description = serializers.CharField(max_length=350, allow_null=True)
     available_groups = serializers.JSONField(allow_null=True, required=False)
+
 
 class CreateTaskSerializer(serializers.ModelSerializer):
     class Meta:

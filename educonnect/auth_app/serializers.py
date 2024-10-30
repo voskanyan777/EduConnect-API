@@ -1,3 +1,4 @@
+from djoser.serializers import UserSerializer
 from rest_framework import serializers
 
 from .models import User
@@ -21,3 +22,8 @@ class RegisterSerializer(serializers.ModelSerializer):
             role=validated_data['role']
         )
         return user
+
+
+class CustomUserSerializer(UserSerializer):
+    class Meta(UserSerializer.Meta):
+        fields = "__all__"
