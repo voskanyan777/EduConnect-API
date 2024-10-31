@@ -25,3 +25,7 @@ class CreateTaskSerializer(serializers.ModelSerializer):
         )
         task.save()
         return task
+
+
+class CreateGroupSerializer(serializers.Serializer):
+    name = serializers.CharField(max_length=90)
