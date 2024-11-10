@@ -22,8 +22,7 @@ class Task(models.Model):
     description = models.CharField(max_length=350, null=False)
     for_course = models.ForeignKey(Course, on_delete=models.CASCADE, null=False)
     created_by_teacher = models.ForeignKey('auth_app.User', on_delete=models.CASCADE, null=False)
-    assigned_groups = models.ManyToManyField('Group', related_name='tasks', blank=True)
-
+    deadline = models.DateField()
     class Meta:
         db_table = 'Tasks'
         verbose_name = 'Task'
@@ -32,11 +31,20 @@ class Task(models.Model):
     def __str__(self):
         return f'{self.name = }. {self.for_course = }'
 
+class GroupNumber(models.Model):
+    name = models.CharField(max_length=90, null=False)
+    created_at = models.DateField(auto_now_add=True)
+
+    class Meta:
+        db_table = 'GroupNumbers'
+        verbose_name = 'Group Number'
+        verbose_name_plural = 'Group Numbers'
+
 
 class Group(models.Model):
     student = models.ForeignKey('auth_app.User', on_delete=models.CASCADE, null=False)
-    group_number = models.CharField(max_length=25, null=False)
-    students_count = models.IntegerField()
+    group_number = models.ForeignKey(GroupNumber, on_delete=models.CASCADE, null=False)
+    students_count = models.PositiveIntegerField(null=False)
 
     class Meta:
         db_table = 'Groups'
@@ -55,7 +63,7 @@ class CourseFeedback(models.Model):
         MinValueValidator(1),
         MaxValueValidator(5)
     ])
-    created_at = models.DateTimeField()
+    created_at = models.DateTimeField(auto_now_add=True)
 
     class Meta:
         db_table = 'course_feedbacks'
@@ -76,7 +84,7 @@ class TeacherFeedback(models.Model):
         MinValueValidator(1),
         MaxValueValidator(5)
     ])
-    created_at = models.DateTimeField()
+    created_at = models.DateTimeField(auto_now_add=True)
 
     class Meta:
         db_table = 'teacher_feedbacks'
